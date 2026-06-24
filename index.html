@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CaptaOro — App de Captación Multi-Canal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <!-- SIDEBAR - Menú lateral -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <span>🥇</span> CaptaOro
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-page="leads">
+                <span class="nav-icon">👥</span> Leads
+            </a>
+            <a href="#" class="nav-item" data-page="campaigns">
+                <span class="nav-icon">🚀</span> Campañas
+            </a>
+            <a href="#" class="nav-item" data-page="channels">
+                <span class="nav-icon">📱</span> Canales
+            </a>
+            <a href="#" class="nav-item" data-page="ai-chat">
+                <span class="nav-icon">🤖</span> IA Chat
+            </a>
+            <a href="#" class="nav-item" data-page="templates">
+                <span class="nav-icon">📝</span> Plantillas
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <span class="nav-icon">📈</span> Analítica
+            </a>
+            <a href="#" class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span> Ajustes
+            </a>
+        </nav>
+        <div class="sidebar-user">
+            <div class="user-avatar">KB</div>
+            <div class="user-info">
+                <strong>Kepa Bilbao</strong>
+                <span>Partner AUVESTA</span>
+            </div>
+        </div>
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+            <div class="topbar-search">
+                <input type="text" placeholder="Buscar leads, campañas..." id="global-search">
+            </div>
+            <div class="topbar-actions">
+                <button class="btn-notif" id="notifications">🔔 <span class="notif-badge">3</span></button>
+                <button class="btn-add-lead" id="add-lead-btn">+ Nuevo Lead</button>
+            </div>
+        </header>
+
+        <!-- PAGES CONTAINER -->
+        <div class="pages-container">
+
+            <!-- ==================== DASHBOARD ==================== -->
+            <section class="page active" id="page-dashboard">
+                <h1>Dashboard</h1>
+                <p class="page-subtitle">Resumen de tu negocio hoy</p>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-data">
+                            <span class="stat-number" id="total-leads">0</span>
+                            <span class="stat-label">Leads totales</span>
+                        </div>
+                    </div>
+                    <div class="stat-card gold">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-data">
+                            <span class="stat-number" id="hot-leads">0</span>
+                            <span class="stat-label">Leads calientes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-data">
+                            <span class="stat-number" id="total-clients">0</span>
+                            <span class="stat-label">Clientes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon">🚀</div>
+                        <div class="stat-data">
+                            <span class="stat-number" id="active-campaigns">0</span>
+                            <span class="stat-label">Campañas activas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>📋 Actividad reciente</h3>
+                        <div class="activity-list" id="activity-list">
+                            <div class="activity-item">
+                                <span class="activity-icon">🆕</span>
+                                <div class="activity-text">
+                                    <strong>Primer paso:</strong> Añade tu primer lead
+                                </div>
+                                <span class="activity-time">Ahora</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>📅 Tareas de hoy</h3>
+                        <div class="tasks-list" id="tasks-list">
+                            <div class="task-item">
+                                <input type="checkbox" id="task-1">
+                                <label for="task-1">Publicar post en Instagram</label>
+                            </div>
+                            <div class="task-item">
+                                <input type="checkbox" id="task-2">
+                                <label for="task-2">Enviar mensaje a 5 leads nuevos</label>
+                            </div>
+                            <div class="task-item">
+                                <input type="checkbox" id="task-3">
+                                <label for="task-3">Responder DMs pendientes</label>
+                            </div>
+                            <div class="task-item">
+                                <input type="checkbox" id="task-4">
+                                <label for="task-4">Hacer 1-2 presentaciones</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Channels Overview -->
+                <div class="card">
+                    <h3>📱 Rendimiento por canal</h3>
+                    <div class="channels-overview">
+                        <div class="channel-bar">
+                            <span class="ch-name">📸 Instagram</span>
+                            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:0%"></div></div>
+                            <span class="ch-count">0 leads</span>
+                        </div>
+                        <div class="channel-bar">
+                            <span class="ch-name">💼 LinkedIn</span>
+                            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:0%"></div></div>
+                            <span class="ch-count">0 leads</span>
+                        </div>
+                        <div class="channel-bar">
+                            <span class="ch-name">📱 WhatsApp</span>
+                            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:0%"></div></div>
+                            <span class="ch-count">0 leads</span>
+                        </div>
+                        <div class="channel-bar">
+                            <span class="ch-name">🌐 Web</span>
+                            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:0%"></div></div>
+                            <span class="ch-count">0 leads</span>
+                        </div>
+                        <div class="channel-bar">
+                            <span class="ch-name">🎵 TikTok</span>
+                            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:0%"></div></div>
+                            <span class="ch-count">0 leads</span>
+                        </div>
+                        <div class="channel-bar">
+                            <span class="ch-name">✈️ Telegram</span>
+                            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:0%"></div></div>
+                            <span class="ch-count">0 leads</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ==================== LEADS ==================== -->
+            <section class="page" id="page-leads">
+                <div class="page-header">
+                    <div>
+                        <h1>Leads</h1>
+                        <p class="page-subtitle">Gestiona todos tus contactos</p>
+                    </div>
+                    <button class="btn-primary" id="add-lead-btn-2">+ Añadir Lead</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <select id="filter-status">
+                        <option value="all">Todos los estados</option>
+                        <option value="nuevo">🟡 Nuevo</option>
+                        <option value="contactado">🔵 Contactado</option>
+                        <option value="interesado">🟠 Interesado</option>
+                        <option value="presentacion">🟢 Presentación</option>
+                        <option value="caliente">🔥 Caliente</option>
+                        <option value="cliente">✅ Cliente</option>
+                        <option value="perdido">❌ Perdido</option>
+                    </select>
+                    <select id="filter-channel">
+                        <option value="all">Todos los canales</option>
+                        <option value="instagram">📸 Instagram</option>
+                        <option value="linkedin">💼 LinkedIn</option>
+                        <option value="whatsapp">📱 WhatsApp</option>
+                        <option value="web">🌐 Web</option>
+                        <option value="tiktok">🎵 TikTok</option>
+                        <option value="telegram">✈️ Telegram</option>
+                        <option value="referido">🤝 Referido</option>
+                    </select>
+                    <input type="text" placeholder="🔍 Buscar por nombre..." id="search-leads">
+                </div>
+
+                <!-- Leads Table -->
+                <div class="leads-table-wrapper">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Canal</th>
+                                <th>Estado</th>
+                                <th>Último contacto</th>
+                                <th>Próximo paso</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leads-tbody">
+                            <!-- Se llena con JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="empty-state" id="leads-empty">
+                        <div class="empty-icon">👥</div>
+                        <h3>No tienes leads todavía</h3>
+                        <p>Añade tu primer lead o espera a que lleguen desde tu web</p>
+                        <button class="btn-primary" id="add-first-lead">+ Añadir primer lead</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== CAMPAÑAS ==================== -->
+            <section class="page" id="page-campaigns">
+                <div class="page-header">
+                    <div>
+                        <h1>Campañas</h1>
+                        <p class="page-subtitle">Automatiza tu captación en todos los canales</p>
+                    </div>
+                    <button class="btn-primary" id="new-campaign-btn">+ Nueva Campaña</button>
+                </div>
+
+                <!-- Campaign Templates -->
+                <div class="campaigns-grid">
+                    <div class="campaign-card">
+                        <div class="campaign-icon">📸</div>
+                        <h3>Instagram — DM Automático</h3>
+                        <p>Cuando alguien te escribe "ORO" por DM, envía secuencia automática</p>
+                        <div class="campaign-stats">
+                            <span>0 enviados</span> · <span>0 respuestas</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn-sm btn-activate">Activar</button>
+                            <button class="btn-sm btn-edit">Editar</button>
+                        </div>
+                    </div>
+                    <div class="campaign-card">
+                        <div class="campaign-icon">💼</div>
+                        <h3>LinkedIn — Prospección</h3>
+                        <p>Envía solicitud + 3 mensajes automáticos a perfiles objetivo</p>
+                        <div class="campaign-stats">
+                            <span>0 enviados</span> · <span>0 respuestas</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn-sm btn-activate">Activar</button>
+                            <button class="btn-sm btn-edit">Editar</button>
+                        </div>
+                    </div>
+                    <div class="campaign-card">
+                        <div class="campaign-icon">📧</div>
+                        <h3>Email — Nurturing 7 días</h3>
+                        <p>Secuencia de 7 emails automáticos para leads nuevos</p>
+                        <div class="campaign-stats">
+                            <span>0 enviados</span> · <span>0 abiertos</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn-sm btn-activate">Activar</button>
+                            <button class="btn-sm btn-edit">Editar</button>
+                        </div>
+                    </div>
+                    <div class="campaign-card">
+                        <div class="campaign-icon">📱</div>
+                        <h3>WhatsApp — Seguimiento</h3>
+                        <p>Secuencia de mensajes para leads que no responden</p>
+                        <div class="campaign-stats">
+                            <span>0 enviados</span> · <span>0 respuestas</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn-sm btn-activate">Activar</button>
+                            <button class="btn-sm btn-edit">Editar</button>
+                        </div>
+                    </div>
+                    <div class="campaign-card">
+                        <div class="campaign-icon">🎵</div>
+                        <h3>TikTok — Comentarios → DM</h3>
+                        <p>Detecta comentarios con interés y envía DM automático</p>
+                        <div class="campaign-stats">
+                            <span>0 detectados</span> · <span>0 DMs</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn-sm btn-activate">Activar</button>
+                            <button class="btn-sm btn-edit">Editar</button>
+                        </div>
+                    </div>
+                    <div class="campaign-card">
+                        <div class="campaign-icon">✈️</div>
+                        <h3>Telegram — Canal + Bot</h3>
+                        <p>Canal de noticias del oro + bot que responde preguntas</p>
+                        <div class="campaign-stats">
+                            <span>0 miembros</span> · <span>0 interacciones</span>
+                        </div>
+                        <div class="campaign-actions">
+                            <button class="btn-sm btn-activate">Activar</button>
+                            <button class="btn-sm btn-edit">Editar</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+            <div class="topbar-search">
+                <input type="text" placeholder="Buscar leads, campañas..." id="global-search">
+            </div>
+            <div class="topbar-actions">
+                <button class="btn-notif" id="notifications">🔔<span class="notif-badge">0</span></button>
+                <button class="btn-primary" id="add-lead-btn">+ Nuevo Lead</button>
+            </div>
+        </header>
+
+        <div class="pages-container">
+            <!-- DASHBOARD -->
+            <section class="page active" id="page-dashboard">
+                <h1>Dashboard</h1>
+                <p class="page-subtitle">Resumen de tu negocio</p>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-data"><span class="stat-number" id="total-leads">0</span><span class="stat-label">Leads totales</span></div></div>
+                    <div class="stat-card gold"><div class="stat-icon">🔥</div><div class="stat-data"><span class="stat-number" id="hot-leads">0</span><span class="stat-label">Leads calientes</span></div></div>
+                    <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-data"><span class="stat-number" id="total-clients">0</span><span class="stat-label">Clientes</span></div></div>
+                    <div class="stat-card blue"><div class="stat-icon">🚀</div><div class="stat-data"><span class="stat-number" id="active-campaigns">0</span><span class="stat-label">Campañas activas</span></div></div>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card"><h3>📋 Actividad reciente</h3><div id="activity-list"><p class="empty-msg">Añade tu primer lead para empezar</p></div></div>
+                    <div class="card"><h3>📅 Tareas de hoy</h3><div id="tasks-list"></div></div>
+                </div>
+            </section>
+
+
+            <!-- LEADS -->
+            <section class="page" id="page-leads">
+                <div class="page-header"><div><h1>Leads</h1><p class="page-subtitle">Todos tus contactos</p></div><button class="btn-primary" onclick="showAddLeadModal()">+ Añadir Lead</button></div>
+                <div class="filters-bar">
+                    <select id="filter-status"><option value="all">Todos</option><option value="nuevo">🟡 Nuevo</option><option value="contactado">🔵 Contactado</option><option value="interesado">🟠 Interesado</option><option value="presentacion">🟢 Presentación</option><option value="caliente">🔥 Caliente</option><option value="cliente">✅ Cliente</option><option value="perdido">❌ Perdido</option></select>
+                    <select id="filter-channel"><option value="all">Todos canales</option><option value="instagram">📸 Instagram</option><option value="linkedin">💼 LinkedIn</option><option value="whatsapp">📱 WhatsApp</option><option value="web">🌐 Web</option><option value="tiktok">🎵 TikTok</option><option value="telegram">✈️ Telegram</option><option value="referido">🤝 Referido</option></select>
+                    <input type="text" placeholder="🔍 Buscar..." id="search-leads">
+                </div>
+                <div class="leads-table-wrapper">
+                    <table class="leads-table"><thead><tr><th>Nombre</th><th>Canal</th><th>Estado</th><th>Último contacto</th><th>Acciones</th></tr></thead><tbody id="leads-tbody"></tbody></table>
+                    <div class="empty-state" id="leads-empty"><div class="empty-icon">👥</div><h3>Sin leads todavía</h3><p>Añade tu primer lead o espera a que lleguen desde tu web</p></div>
+                </div>
+            </section>
+
+
+            <!-- CAMPAÑAS -->
+            <section class="page" id="page-campaigns">
+                <div class="page-header"><div><h1>Campañas</h1><p class="page-subtitle">Automatiza tu captación</p></div><button class="btn-primary" onclick="showNewCampaignModal()">+ Nueva Campaña</button></div>
+                <div class="campaigns-grid">
+                    <div class="campaign-card"><div class="campaign-icon">📸</div><h3>Instagram DM</h3><p>Respuesta automática cuando escriben "ORO"</p><div class="campaign-status off">Inactiva</div><button class="btn-sm" onclick="toggleCampaign(this)">Activar</button></div>
+                    <div class="campaign-card"><div class="campaign-icon">💼</div><h3>LinkedIn Prospección</h3><p>Solicitud + 3 mensajes automáticos</p><div class="campaign-status off">Inactiva</div><button class="btn-sm" onclick="toggleCampaign(this)">Activar</button></div>
+                    <div class="campaign-card"><div class="campaign-icon">📧</div><h3>Email Nurturing</h3><p>7 emails automáticos en 11 días</p><div class="campaign-status off">Inactiva</div><button class="btn-sm" onclick="toggleCampaign(this)">Activar</button></div>
+                    <div class="campaign-card"><div class="campaign-icon">📱</div><h3>WhatsApp Seguimiento</h3><p>Recordatorios a leads que no responden</p><div class="campaign-status off">Inactiva</div><button class="btn-sm" onclick="toggleCampaign(this)">Activar</button></div>
+                    <div class="campaign-card"><div class="campaign-icon">🎵</div><h3>TikTok → DM</h3><p>Detecta interés en comentarios</p><div class="campaign-status off">Inactiva</div><button class="btn-sm" onclick="toggleCampaign(this)">Activar</button></div>
+                    <div class="campaign-card"><div class="campaign-icon">✈️</div><h3>Telegram Bot</h3><p>Canal noticias + bot preguntas</p><div class="campaign-status off">Inactiva</div><button class="btn-sm" onclick="toggleCampaign(this)">Activar</button></div>
+                </div>
+            </section>
+
+
+            <!-- CANALES -->
+            <section class="page" id="page-channels">
+                <div class="page-header"><div><h1>Canales conectados</h1><p class="page-subtitle">Gestiona todas tus redes desde aquí</p></div></div>
+                <div class="channels-grid">
+                    <div class="channel-card"><div class="ch-icon">📸</div><h3>Instagram</h3><p>@kepabilbao</p><div class="ch-status connected">Conectado</div><button class="btn-sm">Configurar</button></div>
+                    <div class="channel-card"><div class="ch-icon">💼</div><h3>LinkedIn</h3><p>Kepa Bilbao</p><div class="ch-status pending">Pendiente</div><button class="btn-sm">Conectar</button></div>
+                    <div class="channel-card"><div class="ch-icon">📱</div><h3>WhatsApp</h3><p>611 918 310</p><div class="ch-status connected">Conectado</div><button class="btn-sm">Configurar</button></div>
+                    <div class="channel-card"><div class="ch-icon">📧</div><h3>Email</h3><p>kepabilbao67@gmail.com</p><div class="ch-status connected">Conectado</div><button class="btn-sm">Configurar</button></div>
+                    <div class="channel-card"><div class="ch-icon">🎵</div><h3>TikTok</h3><p>@kepabilbao</p><div class="ch-status pending">Pendiente</div><button class="btn-sm">Conectar</button></div>
+                    <div class="channel-card"><div class="ch-icon">✈️</div><h3>Telegram</h3><p>Bot de oro</p><div class="ch-status pending">Pendiente</div><button class="btn-sm">Conectar</button></div>
+                    <div class="channel-card"><div class="ch-icon">🌐</div><h3>Web Landing</h3><p>oroparatufuturo.netlify.app</p><div class="ch-status connected">Conectado</div><button class="btn-sm">Configurar</button></div>
+                    <div class="channel-card"><div class="ch-icon">📣</div><h3>Facebook Ads</h3><p>Campañas pagadas</p><div class="ch-status pending">Pendiente</div><button class="btn-sm">Conectar</button></div>
+                </div>
+            </section>
+
+
+            <!-- IA CHAT -->
+            <section class="page" id="page-ai-chat">
+                <div class="page-header"><div><h1>🤖 Asistente IA</h1><p class="page-subtitle">Pregúntame sobre ventas, oro, objeciones, estrategia...</p></div></div>
+                <div class="ai-chat-container">
+                    <div class="ai-messages" id="ai-messages">
+                        <div class="ai-msg bot"><p>¡Hola Kepa! 👋 Soy tu asistente de ventas. Puedo ayudarte con:</p><ul><li>📊 Datos del mercado del oro</li><li>💬 Cómo responder objeciones</li><li>📝 Escribir mensajes para leads</li><li>🎯 Estrategias de captación</li><li>📱 Qué publicar en redes</li></ul><p>¿En qué te ayudo hoy?</p></div>
+                    </div>
+                    <div class="ai-input-bar">
+                        <input type="text" id="ai-input" placeholder="Escribe tu pregunta...">
+                        <button id="ai-send" onclick="sendAIMessage()">➤</button>
+                    </div>
+                    <div class="ai-suggestions">
+                        <button onclick="askAI('¿Cómo respondo a un cliente que dice que es caro?')">Objeción: es caro</button>
+                        <button onclick="askAI('Escríbeme un mensaje de WhatsApp para un lead frío')">Mensaje WhatsApp</button>
+                        <button onclick="askAI('¿Qué publico hoy en Instagram?')">Post de hoy</button>
+                        <button onclick="askAI('Dame el precio del oro actual')">Precio del oro</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PLANTILLAS -->
+            <section class="page" id="page-templates">
+                <div class="page-header"><div><h1>Plantillas de mensajes</h1><p class="page-subtitle">Mensajes listos para copiar y enviar</p></div></div>
+                <div class="templates-grid">
+                    <div class="template-card"><h4>📱 WhatsApp — Primer contacto</h4><p class="template-preview">Hola! ¿Qué tal? He empezado con algo nuevo que creo que te puede interesar...</p><button class="btn-sm" onclick="copyTemplate(0)">Copiar</button></div>
+                    <div class="template-card"><h4>💼 LinkedIn — Nota conexión</h4><p class="template-preview">Hola, he visto tu perfil y me parece muy interesante lo que haces...</p><button class="btn-sm" onclick="copyTemplate(1)">Copiar</button></div>
+                    <div class="template-card"><h4>📸 Instagram — DM respuesta</h4><p class="template-preview">¡Hola! Genial que te interese el ahorro en oro. Te cuento en 30 seg...</p><button class="btn-sm" onclick="copyTemplate(2)">Copiar</button></div>
+                    <div class="template-card"><h4>📧 Email — Seguimiento</h4><p class="template-preview">Hola, solo quería saber si pudiste ver la info que te envié...</p><button class="btn-sm" onclick="copyTemplate(3)">Copiar</button></div>
+                    <div class="template-card"><h4>🔥 Cierre — Lead caliente</h4><p class="template-preview">¿Qué me dices? ¿Vamos con la S-3 para empezar? Te guío paso a paso...</p><button class="btn-sm" onclick="copyTemplate(4)">Copiar</button></div>
+                    <div class="template-card"><h4>❓ Objeción — "Es caro"</h4><p class="template-preview">Puedes empezar desde 25€/mes. Es menos de lo que gastas en café...</p><button class="btn-sm" onclick="copyTemplate(5)">Copiar</button></div>
+                </div>
+            </section>
+
+            <!-- ANALÍTICA -->
+            <section class="page" id="page-analytics">
+                <div class="page-header"><div><h1>Analítica</h1><p class="page-subtitle">Métricas de rendimiento</p></div></div>
+                <div class="analytics-grid">
+                    <div class="metric-card"><h4>Ratio de conversión</h4><span class="metric-big" id="conversion-rate">0%</span><p>Leads → Clientes</p></div>
+                    <div class="metric-card"><h4>Mejor canal</h4><span class="metric-big" id="best-channel">—</span><p>Mayor conversión</p></div>
+                    <div class="metric-card"><h4>Tiempo medio cierre</h4><span class="metric-big" id="avg-close-time">— días</span><p>De lead a cliente</p></div>
+                    <div class="metric-card"><h4>Leads esta semana</h4><span class="metric-big" id="weekly-leads">0</span><p>vs semana anterior</p></div>
+                </div>
+            </section>
+
+            <!-- AJUSTES -->
+            <section class="page" id="page-settings">
+                <div class="page-header"><div><h1>Ajustes</h1><p class="page-subtitle">Configura tu cuenta</p></div></div>
+                <div class="settings-form">
+                    <div class="setting-group"><label>Tu nombre</label><input type="text" value="Kepa Bilbao" id="setting-name"></div>
+                    <div class="setting-group"><label>WhatsApp</label><input type="text" value="611918310" id="setting-whatsapp"></div>
+                    <div class="setting-group"><label>Email</label><input type="text" value="kepabilbao67@gmail.com" id="setting-email"></div>
+                    <div class="setting-group"><label>Instagram</label><input type="text" value="@kepabilbao" id="setting-ig"></div>
+                    <div class="setting-group"><label>Ref AUVESTA</label><input type="text" value="43667" id="setting-ref"></div>
+                    <div class="setting-group"><label>API Key OpenAI (para IA)</label><input type="password" placeholder="sk-..." id="setting-apikey"></div>
+                    <button class="btn-primary" onclick="saveSettings()">Guardar cambios</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+
+    <!-- MODAL: Añadir Lead -->
+    <div class="modal" id="add-lead-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>+ Nuevo Lead</h3><button class="modal-close" onclick="closeModal('add-lead-modal')">✕</button></div>
+            <form id="add-lead-form" onsubmit="addLead(event)">
+                <div class="form-row"><div class="form-group"><label>Nombre</label><input type="text" id="lead-name" required></div><div class="form-group"><label>Teléfono</label><input type="tel" id="lead-phone"></div></div>
+                <div class="form-group"><label>Email</label><input type="email" id="lead-email"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Canal de origen</label><select id="lead-channel"><option value="instagram">📸 Instagram</option><option value="linkedin">💼 LinkedIn</option><option value="whatsapp">📱 WhatsApp</option><option value="web">🌐 Web</option><option value="tiktok">🎵 TikTok</option><option value="telegram">✈️ Telegram</option><option value="referido">🤝 Referido</option><option value="presencial">🤝 Presencial</option></select></div>
+                    <div class="form-group"><label>Estado</label><select id="lead-status"><option value="nuevo">🟡 Nuevo</option><option value="contactado">🔵 Contactado</option><option value="interesado">🟠 Interesado</option><option value="presentacion">🟢 Presentación</option><option value="caliente">🔥 Caliente</option><option value="cliente">✅ Cliente</option></select></div>
+                </div>
+                <div class="form-group"><label>Notas</label><textarea id="lead-notes" rows="2" placeholder="Ej: Le interesa para sus hijos, tiene 200€/mes..."></textarea></div>
+                <button type="submit" class="btn-primary" style="width:100%">Guardar Lead</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="app.js"></script>
+</body>
+</html>
