@@ -352,9 +352,36 @@
                     <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-data"><span class="stat-number" id="total-clients">0</span><span class="stat-label">Clientes</span></div></div>
                     <div class="stat-card blue"><div class="stat-icon">🚀</div><div class="stat-data"><span class="stat-number" id="active-campaigns">0</span><span class="stat-label">Campañas activas</span></div></div>
                 </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <a class="qa-btn" onclick="showAddLeadModal()"><span class="qa-icon">➕</span><span class="qa-text">Añadir Lead</span></a>
+                    <a class="qa-btn" href="https://wa.me/34611918310" target="_blank"><span class="qa-icon">📱</span><span class="qa-text">Mi WhatsApp</span></a>
+                    <a class="qa-btn" onclick="document.querySelector('[data-page=ai-chat]').click()"><span class="qa-icon">🤖</span><span class="qa-text">Asistente IA</span></a>
+                    <a class="qa-btn" onclick="exportLeadsCSV()"><span class="qa-icon">📥</span><span class="qa-text">Exportar CSV</span></a>
+                </div>
+
                 <div class="dashboard-grid">
-                    <div class="card"><h3>📋 Actividad reciente</h3><div id="activity-list"><p class="empty-msg">Añade tu primer lead para empezar</p></div></div>
-                    <div class="card"><h3>📅 Tareas de hoy</h3><div id="tasks-list"></div></div>
+                    <div class="card">
+                        <h3>📋 Actividad reciente</h3>
+                        <div id="activity-list"></div>
+                    </div>
+                    <div class="card">
+                        <h3>📅 Tareas de hoy</h3>
+                        <div class="tasks-list" id="tasks-list">
+                            <div class="task-item"><input type="checkbox" id="t1"><label for="t1">Publicar post en Instagram</label></div>
+                            <div class="task-item"><input type="checkbox" id="t2"><label for="t2">Enviar 5 mensajes a leads nuevos</label></div>
+                            <div class="task-item"><input type="checkbox" id="t3"><label for="t3">Responder DMs pendientes</label></div>
+                            <div class="task-item"><input type="checkbox" id="t4"><label for="t4">Hacer 1-2 presentaciones</label></div>
+                            <div class="task-item"><input type="checkbox" id="t5"><label for="t5">Actualizar CRM (mover estados)</label></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Channels Performance -->
+                <div class="card">
+                    <h3>📱 Leads por canal</h3>
+                    <div class="channels-overview" id="channels-overview"></div>
                 </div>
             </section>
 

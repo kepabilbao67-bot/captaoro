@@ -84,3 +84,58 @@ function exportLeadsCSV(){if(!leads.length){showToast('No hay leads');return;}co
 
 // === INIT ===
 renderLeads(); updateDashboard();
+
+// === DASHBOARD CHANNELS ===
+function updateChannelsOverview() {
+    const channelCounts = {};
+    const channels = ['instagram','linkedin','whatsapp','web','tiktok','telegram','referido'];
+    channels.forEach(c => channelCounts[c] = leads.filter(l => l.channel === c).length);
+    const max = Math.max(...Object.values(channelCounts), 1);
+    const icons = {instagram:'📸',linkedin:'💼',whatsapp:'📱',web:'🌐',tiktok:'🎵',telegram:'✈️',referido:'🤝'};
+    const container = document.getElementById('channels-overview');
+    if (!container) return;
+    container.innerHTML = channels.map(c => `
+        <div class="channel-bar">
+            <span class="ch-name">${icons[c]} ${c}</span>
+            <div class="ch-bar-track"><div class="ch-bar-fill" style="width:${(channelCounts[c]/max)*100}%"></div></div>
+            <span class="ch-count">${channelCounts[c]} leads</span>
+        </div>
+    `).join('');
+}
+
+// === ACTIVITY LOG ===
+function updateActivity() {
+    const container = document.getElementById('activity-list');
+    if (!container) return;
+    const recent = [...leads].sort((a,b) => new Date(b.lastContact) - new Date(a.lastContact)).slice(0, 5);
+    if (!recent.length) { container.innerHTML = '<p class="empty-msg">Añade tu primer lead para empezar</p>'; return; }
+    const si = {nuevo:'🆕',contactado:'📤',interesado:'💬',presentacion:'📞',caliente:'🔥',cliente:'✅',perdido:'❌'};
+    container.innerHTML = recent.map(l => `
+        <div class="activity-item">
+            <span class="activity-icon">${si[l.status]||'🆕'}</span>
+            <div><strong>${l.name}</strong> — ${l.status}</div>
+            <span class="activity-time">${timeAgo(l.lastContact)}</span>
+        </div>
+    `).join('');
+}
+
+// === IMPROVED DASHBOARD UPDATE ===
+const _origUpdate = updateDashboard;
+updateDashboard = function() {
+    _origUpdate();
+    updateChannelsOverview();
+    updateActivity();
+    // Weekly leads
+    const weekLeads = leads.filter(l => { const d = new Date(l.created); const w = new Date(); w.setDate(w.getDate()-7); return d > w; }).length;
+    const el = document.getElementById('weekly-leads');
+    if (el) el.textContent = weekLeads;
+    // Best channel
+    const channels = {};
+    leads.filter(l=>l.status==='cliente').forEach(l => { channels[l.channel] = (channels[l.channel]||0) + 1; });
+    const best = Object.entries(channels).sort((a,b)=>b[1]-a[1])[0];
+    const bestEl = document.getElementById('best-channel');
+    if (bestEl) bestEl.textContent = best ? best[0] : '—';
+};
+
+// Re-init
+renderLeads(); updateDashboard();
