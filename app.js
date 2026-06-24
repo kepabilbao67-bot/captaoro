@@ -1,215 +1,86 @@
-// ========== CaptaOro — App de Captación Multi-Canal ==========
-// Toda la lógica de la aplicación
-
-// Estado global
+// ========== CaptaOro v1.1 — COMPLETA ==========
 let leads = JSON.parse(localStorage.getItem('captaoro_leads') || '[]');
-let settings = JSON.parse(localStorage.getItem('captaoro_settings') || '{}');
+let settings = JSON.parse(localStorage.getItem('captaoro_settings') || '{"name":"Kepa Bilbao","whatsapp":"611918310","email":"kepabilbao67@gmail.com","ig":"@kepabilbao","ref":"43667"}');
 
-// ========== NAVEGACIÓN ==========
+// === NAVEGACIÓN ===
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
         e.preventDefault();
-        const page = item.dataset.page;
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById('page-' + page).classList.add('active');
+        document.getElementById('page-' + item.dataset.page).classList.add('active');
+        document.getElementById('sidebar').classList.remove('open');
     });
 });
+document.getElementById('menu-toggle').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 
-// Mobile menu
-document.getElementById('menu-toggle').addEventListener('click', () => {
-    document.getElementById('sidebar').classList.toggle('open');
-});
-
-
-
-// ========== LEADS ==========
-function showAddLeadModal() {
-    document.getElementById('add-lead-modal').classList.add('show');
-}
-function closeModal(id) {
-    document.getElementById(id).classList.remove('show');
-}
+// === LEADS ===
+function showAddLeadModal() { document.getElementById('add-lead-modal').classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 document.getElementById('add-lead-btn').addEventListener('click', showAddLeadModal);
 
 function addLead(e) {
     e.preventDefault();
-    const lead = {
-        id: Date.now(),
-        name: document.getElementById('lead-name').value,
-        phone: document.getElementById('lead-phone').value,
-        email: document.getElementById('lead-email').value,
-        channel: document.getElementById('lead-channel').value,
-        status: document.getElementById('lead-status').value,
-        notes: document.getElementById('lead-notes').value,
-        created: new Date().toISOString(),
-        lastContact: new Date().toISOString(),
-    };
+    const lead = { id:Date.now(), name:document.getElementById('lead-name').value, phone:document.getElementById('lead-phone').value, email:document.getElementById('lead-email').value, channel:document.getElementById('lead-channel').value, status:document.getElementById('lead-status').value, notes:document.getElementById('lead-notes').value, created:new Date().toISOString(), lastContact:new Date().toISOString() };
     leads.push(lead);
-    saveLeads();
-    renderLeads();
-    updateDashboard();
+    saveLeads(); renderLeads(); updateDashboard();
     closeModal('add-lead-modal');
     e.target.reset();
     showToast('✅ Lead añadido: ' + lead.name);
 }
-
-function saveLeads() {
-    localStorage.setItem('captaoro_leads', JSON.stringify(leads));
-}
+function saveLeads() { localStorage.setItem('captaoro_leads', JSON.stringify(leads)); }
+function changeStatus(id, status) { const l=leads.find(x=>x.id===id); if(l){l.status=status;l.lastContact=new Date().toISOString();saveLeads();renderLeads();updateDashboard();} }
+function deleteLead(id) { if(confirm('¿Eliminar?')){leads=leads.filter(x=>x.id!==id);saveLeads();renderLeads();updateDashboard();} }
 
 function renderLeads() {
-    const tbody = document.getElementById('leads-tbody');
-    const empty = document.getElementById('leads-empty');
-    const statusFilter = document.getElementById('filter-status').value;
-    const channelFilter = document.getElementById('filter-channel').value;
-    const search = document.getElementById('search-leads').value.toLowerCase();
-
-    let filtered = leads.filter(l => {
-        if (statusFilter !== 'all' && l.status !== statusFilter) return false;
-        if (channelFilter !== 'all' && l.channel !== channelFilter) return false;
-        if (search && !l.name.toLowerCase().includes(search)) return false;
-        return true;
-    });
-
-    if (filtered.length === 0) {
-        tbody.innerHTML = '';
-        empty.style.display = 'block';
-        return;
-    }
-    empty.style.display = 'none';
-
-    const statusIcons = { nuevo:'🟡', contactado:'🔵', interesado:'🟠', presentacion:'🟢', caliente:'🔥', cliente:'✅', perdido:'❌' };
-    const channelIcons = { instagram:'📸', linkedin:'💼', whatsapp:'📱', web:'🌐', tiktok:'🎵', telegram:'✈️', referido:'🤝', presencial:'🤝' };
-
-    tbody.innerHTML = filtered.map(l => `
-        <tr>
-            <td><strong>${l.name}</strong>${l.phone ? '<br><small>' + l.phone + '</small>' : ''}</td>
-            <td>${channelIcons[l.channel] || '🌐'} ${l.channel}</td>
-            <td><span class="status-badge">${statusIcons[l.status] || '🟡'} ${l.status}</span></td>
-            <td><small>${timeAgo(l.lastContact)}</small></td>
-            <td>
-                <select onchange="changeStatus(${l.id}, this.value)" style="font-size:0.75rem;padding:4px;">
-                    <option value="nuevo" ${l.status==='nuevo'?'selected':''}>🟡 Nuevo</option>
-                    <option value="contactado" ${l.status==='contactado'?'selected':''}>🔵 Contactado</option>
-                    <option value="interesado" ${l.status==='interesado'?'selected':''}>🟠 Interesado</option>
-                    <option value="presentacion" ${l.status==='presentacion'?'selected':''}>🟢 Presentación</option>
-                    <option value="caliente" ${l.status==='caliente'?'selected':''}>🔥 Caliente</option>
-                    <option value="cliente" ${l.status==='cliente'?'selected':''}>✅ Cliente</option>
-                    <option value="perdido" ${l.status==='perdido'?'selected':''}>❌ Perdido</option>
-                </select>
-                <button onclick="deleteLead(${l.id})" class="btn-sm" style="color:var(--red);margin-left:5px;">🗑️</button>
-            </td>
-        </tr>
-    `).join('');
+    const tbody=document.getElementById('leads-tbody'), empty=document.getElementById('leads-empty');
+    const sf=document.getElementById('filter-status').value, cf=document.getElementById('filter-channel').value, search=document.getElementById('search-leads').value.toLowerCase();
+    let filtered=leads.filter(l=>{if(sf!=='all'&&l.status!==sf)return false;if(cf!=='all'&&l.channel!==cf)return false;if(search&&!l.name.toLowerCase().includes(search))return false;return true;});
+    if(!filtered.length){tbody.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    const si={nuevo:'🟡',contactado:'🔵',interesado:'🟠',presentacion:'🟢',caliente:'🔥',cliente:'✅',perdido:'❌'};
+    const ci={instagram:'📸',linkedin:'💼',whatsapp:'📱',web:'🌐',tiktok:'🎵',telegram:'✈️',referido:'🤝',presencial:'🤝'};
+    tbody.innerHTML=filtered.map(l=>`<tr><td><strong>${l.name}</strong>${l.phone?'<br><small>'+l.phone+'</small>':''}</td><td>${ci[l.channel]||'🌐'} ${l.channel}</td><td>${si[l.status]||'🟡'} ${l.status}</td><td><small>${timeAgo(l.lastContact)}</small></td><td><select onchange="changeStatus(${l.id},this.value)" style="font-size:0.75rem;padding:4px"><option value="nuevo" ${l.status==='nuevo'?'selected':''}>🟡 Nuevo</option><option value="contactado" ${l.status==='contactado'?'selected':''}>🔵 Contactado</option><option value="interesado" ${l.status==='interesado'?'selected':''}>🟠 Interesado</option><option value="presentacion" ${l.status==='presentacion'?'selected':''}>🟢 Presentación</option><option value="caliente" ${l.status==='caliente'?'selected':''}>🔥 Caliente</option><option value="cliente" ${l.status==='cliente'?'selected':''}>✅ Cliente</option><option value="perdido" ${l.status==='perdido'?'selected':''}>❌ Perdido</option></select> <button onclick="deleteLead(${l.id})" style="color:#ef4444;border:none;background:none;cursor:pointer">🗑️</button></td></tr>`).join('');
 }
+document.getElementById('filter-status').addEventListener('change',renderLeads);
+document.getElementById('filter-channel').addEventListener('change',renderLeads);
+document.getElementById('search-leads').addEventListener('input',renderLeads);
 
-function changeStatus(id, status) {
-    const lead = leads.find(l => l.id === id);
-    if (lead) { lead.status = status; lead.lastContact = new Date().toISOString(); saveLeads(); renderLeads(); updateDashboard(); }
-}
-function deleteLead(id) {
-    if (confirm('¿Eliminar este lead?')) { leads = leads.filter(l => l.id !== id); saveLeads(); renderLeads(); updateDashboard(); }
-}
-
-// Filters
-document.getElementById('filter-status').addEventListener('change', renderLeads);
-document.getElementById('filter-channel').addEventListener('change', renderLeads);
-document.getElementById('search-leads').addEventListener('input', renderLeads);
-
-
-
-// ========== DASHBOARD ==========
+// === DASHBOARD ===
 function updateDashboard() {
-    document.getElementById('total-leads').textContent = leads.length;
-    document.getElementById('hot-leads').textContent = leads.filter(l => l.status === 'caliente').length;
-    document.getElementById('total-clients').textContent = leads.filter(l => l.status === 'cliente').length;
-    // Conversion rate
-    const rate = leads.length > 0 ? Math.round((leads.filter(l=>l.status==='cliente').length / leads.length) * 100) : 0;
-    document.getElementById('conversion-rate').textContent = rate + '%';
+    document.getElementById('total-leads').textContent=leads.length;
+    document.getElementById('hot-leads').textContent=leads.filter(l=>l.status==='caliente').length;
+    document.getElementById('total-clients').textContent=leads.filter(l=>l.status==='cliente').length;
+    const rate=leads.length>0?Math.round((leads.filter(l=>l.status==='cliente').length/leads.length)*100):0;
+    document.getElementById('conversion-rate').textContent=rate+'%';
+    document.getElementById('weekly-leads').textContent=leads.filter(l=>{const d=new Date(l.created);const w=new Date();w.setDate(w.getDate()-7);return d>w;}).length;
 }
 
-// ========== IA CHAT ==========
-function sendAIMessage() {
-    const input = document.getElementById('ai-input');
-    const msg = input.value.trim();
-    if (!msg) return;
-    addAIMessage(msg, 'user');
-    input.value = '';
-    setTimeout(() => { addAIMessage(getAIResponse(msg), 'bot'); }, 800);
-}
-function askAI(question) {
-    document.getElementById('ai-input').value = question;
-    sendAIMessage();
-}
-document.getElementById('ai-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAIMessage(); });
+// === IA CHAT ===
+function sendAIMessage(){const input=document.getElementById('ai-input');const msg=input.value.trim();if(!msg)return;addAIMsg(msg,'user');input.value='';setTimeout(()=>addAIMsg(getAIResponse(msg),'bot'),800);}
+function askAI(q){document.getElementById('ai-input').value=q;sendAIMessage();}
+document.getElementById('ai-input').addEventListener('keypress',(e)=>{if(e.key==='Enter')sendAIMessage();});
+document.getElementById('ai-send').addEventListener('click',sendAIMessage);
+function addAIMsg(text,type){const c=document.getElementById('ai-messages');const d=document.createElement('div');d.className='ai-msg '+type;d.innerHTML=text.replace(/\n/g,'<br>');c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function getAIResponse(q){q=q.toLowerCase();if(q.includes('caro')||q.includes('objecion'))return'💬 <strong>Respuesta a "es caro":</strong>\n\n"Puedes empezar desde 25€/mes. Es menos de lo que gastas en café. Y cada euro compra oro real. La diferencia es que el café desaparece en 5 minutos, tu oro puede estar aquí en 20 años valiendo el doble."';if(q.includes('whatsapp')||q.includes('mensaje'))return'📱 <strong>Mensaje para lead frío:</strong>\n\n"Hola! He empezado con algo que creo que te puede interesar: puedes ahorrar en ORO FÍSICO desde 25€/mes con una empresa alemana de 17 años. El oro ha subido +144% en 5 años. ¿Te suena interesante?"';if(q.includes('instagram')||q.includes('post')||q.includes('publicar'))return'📸 <strong>Post para hoy:</strong>\n\n"🥇 144%. Eso es lo que ha subido el oro en 5 años. ¿Y tu cuenta del banco? Un 0,5%. Ahorrar en oro desde 25€/mes no es para ricos. Es para personas inteligentes. Escríbeme ORO por DM 👇 #oro #ahorro #orofisico"';if(q.includes('precio')||q.includes('actual'))return'📊 <strong>Precio actual:</strong>\n\n• Oro: ~116€/gramo\n• Onza: ~3.636€\n• Subida 5 años: +144%\n• Ratio oro/plata: ~66';if(q.includes('tarifa')||q.includes('recomendar'))return'💰 <strong>Recomendación:</strong>\n\n• 25-100€/mes → S-3 (entrada 300€)\n• 100-400€/mes → M-6 (entrada 600€, bonus cubre entrada)\n• 400-1000€/mes → L-12 (3% dto + Switch Pilot)\n• +1000€/mes → XL-24 (6% dto)';if(q.includes('cierre')||q.includes('cerrar'))return'🔥 <strong>Script cierre:</strong>\n\n"¿Qué me dices? ¿Vamos con la S-3? Son 300€ y luego pones lo que quieras. Si no te convence, vendes online y recuperas. Sin penalización. ¿Lo hacemos? Te guío ahora mismo."';if(q.includes('segur')||q.includes('estafa'))return'🔐 <strong>Argumento seguridad:</strong>\n\n"AUVESTA es una sociedad anónima alemana con 17 años. +200.000 inversores. Certificada Trusted Shops. Auditada cada 3 meses. Tu lingote con número de serie a TU nombre. Si la empresa cerrara, tu oro sigue siendo tuyo en la cámara."';return'🤖 No tengo una respuesta preparada para eso. Prueba a preguntar sobre:\n• Objeciones (es caro, no me fío...)\n• Mensajes para leads\n• Posts para redes\n• Precios del oro\n• Tarifas\n• Scripts de cierre';}
 
-function addAIMessage(text, type) {
-    const container = document.getElementById('ai-messages');
-    const div = document.createElement('div');
-    div.className = 'ai-msg ' + type;
-    div.innerHTML = text.replace(/\n/g, '<br>');
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
-}
+// === CAMPAÑAS ===
+function toggleCampaign(btn){const s=btn.previousElementSibling;if(s.classList.contains('off')){s.classList.remove('off');s.classList.add('on');s.textContent='Activa';btn.textContent='Pausar';showToast('🚀 Campaña activada');}else{s.classList.remove('on');s.classList.add('off');s.textContent='Inactiva';btn.textContent='Activar';showToast('⏸️ Campaña pausada');}}
 
-function getAIResponse(q) {
-    q = q.toLowerCase();
-    if (q.includes('caro') || q.includes('precio') || q.includes('objecion')) return '💬 Respuesta a "es caro":\n\n"Puedes empezar desde 25€/mes. Es menos de lo que gastas en café. Y cada euro compra oro real a precio mayorista. La diferencia es que el café desaparece en 5 minutos, tu oro puede estar aquí en 20 años valiendo el doble."';
-    if (q.includes('whatsapp') || q.includes('mensaje')) return '📱 Mensaje para lead frío:\n\n"Hola! ¿Qué tal? Oye, te cuento algo rápido. He empezado con algo que creo que te puede interesar: puedes ahorrar en ORO FÍSICO desde 25€/mes, con una empresa alemana de 17 años. El oro ha subido +144% en 5 años. ¿Te suena interesante? Sin compromiso, si quieres te paso más info."';
-    if (q.includes('instagram') || q.includes('publicar') || q.includes('post')) return '📸 Post para hoy:\n\n"🥇 144%. Eso es lo que ha subido el oro en 5 años. ¿Y tu cuenta del banco? Un 0,5%. ¿La inflación? Te ha quitado un -25%. Ahorrar en oro desde 25€/mes no es para ricos. Es para personas inteligentes. Escríbeme ORO por DM 👇 #oro #ahorro #orofisico"';
-    if (q.includes('precio') || q.includes('oro actual')) return '📊 Precio actual del oro:\n\n~116€/gramo (Junio 2026)\nOnza: ~3.636€\nSubida 5 años: +144%\nSubida 1 año: +38%\n\nRatio oro/plata: ~66 (oro favorable cuando <80)';
-    if (q.includes('tarifa') || q.includes('recomendar')) return '💰 Recomendación de tarifa:\n\n• 25-100€/mes → S-3 (entrada 300€)\n• 100-400€/mes → M-6 (entrada 600€, bonus 600€ = gratis)\n• 400-1000€/mes → L-12 (3% descuento + Switch Pilot)\n• +1000€/mes → XL-24 (6% descuento, máximo beneficio)';
-    if (q.includes('cierre') || q.includes('cerrar')) return '🔥 Script de cierre:\n\n"Oye [nombre], ¿qué te parece? ¿Vamos? La S-3 son solo 300€ de entrada y luego pones lo que quieras. Si no te convence, vendes online y recuperas tu dinero. Sin penalización. ¿Lo hacemos? Te guío paso a paso ahora mismo."';
-    return '🤖 Buena pregunta. Te recomiendo:\n\n1. Revisa tus plantillas de mensajes (pestaña Plantillas)\n2. Mira el calendario de contenido en tu carpeta de archivos\n3. Si la duda es sobre un cliente específico, cuéntame su situación y te digo qué decirle.\n\n¿Puedes darme más detalle?';
-}
+// === PLANTILLAS ===
+const templates=["Hola! ¿Qué tal? 😊 He empezado con algo que creo que te puede interesar: puedes ahorrar en ORO FÍSICO desde 25€/mes con una empresa alemana de 17 años. El oro ha subido un 144% en 5 años. ¿Te suena interesante?","Hola, he visto tu perfil y me parece muy interesante. Me dedico a ayudar a profesionales a proteger su patrimonio con ahorro en oro físico. Me encantaría conectar!","¡Hola! 👋 Genial que te interese. Te cuento: 🥇 Oro FÍSICO desde 25€/mes 📈 +144% en 5 años 🔐 Cámaras en Zúrich ✅ Sin permanencia. ¿Quieres saber más?","Hola! Solo quería saber si pudiste ver la info sobre el ahorro en oro. Si te surge cualquier duda estoy aquí. Sin prisa 🙂","¿Qué me dices? ¿Vamos con la S-3? Son 300€ de entrada y luego pones lo que quieras desde 25€/mes. Te guío paso a paso ahora mismo 🙂","Puedes empezar desde 25€/mes. Menos que café. La diferencia: el café desaparece en 5 min. Tu oro puede estar aquí en 20 años valiendo el doble."];
+function copyTemplate(idx){navigator.clipboard.writeText(templates[idx]).then(()=>showToast('📋 Copiado al portapapeles'));}
 
-// ========== CAMPAÑAS ==========
-function toggleCampaign(btn) {
-    const status = btn.previousElementSibling;
-    if (status.classList.contains('off')) { status.classList.remove('off'); status.classList.add('on'); status.textContent = 'Activa'; btn.textContent = 'Pausar'; showToast('🚀 Campaña activada'); }
-    else { status.classList.remove('on'); status.classList.add('off'); status.textContent = 'Inactiva'; btn.textContent = 'Activar'; showToast('⏸️ Campaña pausada'); }
-}
+// === SETTINGS ===
+function saveSettings(){settings={name:document.getElementById('setting-name').value,whatsapp:document.getElementById('setting-whatsapp').value,email:document.getElementById('setting-email').value,ig:document.getElementById('setting-ig').value,ref:document.getElementById('setting-ref').value,apikey:document.getElementById('setting-apikey').value};localStorage.setItem('captaoro_settings',JSON.stringify(settings));showToast('✅ Guardado');}
 
-// ========== PLANTILLAS ==========
-const templates = [
-    "Hola! ¿Qué tal? 😊 Oye, te cuento algo rápido. He empezado con algo que creo que te puede interesar: puedes ahorrar en ORO FÍSICO desde 25€/mes con una empresa alemana de 17 años. El oro ha subido un 144% en 5 años. ¿Te suena interesante o no es lo tuyo?",
-    "Hola, he visto tu perfil y me parece muy interesante lo que haces. Me dedico a ayudar a profesionales a proteger su patrimonio con ahorro en oro físico. Me encantaría conectar. ¡Un saludo!",
-    "¡Hola! 👋 Genial que te interese el ahorro en oro. Te cuento en 30 seg: 🥇 Oro FÍSICO (lingote con tu nombre) 📈 +144% en 5 años 💰 Desde 25€/mes 🔐 Cámaras en Zúrich ✅ Sin permanencia. ¿Quieres saber más?",
-    "Hola! Solo quería saber si pudiste ver la info que te envié sobre el ahorro en oro. Si te surge cualquier duda estoy aquí. Sin prisa 🙂",
-    "¿Qué me dices? ¿Vamos con la S-3 para empezar? Son solo 300€ de entrada y luego pones lo que quieras desde 25€/mes. Te guío paso a paso ahora mismo si quieres 🙂",
-    "Puedes empezar desde 25€/mes. Es menos de lo que gastas en café. Y cada euro compra oro real. La diferencia: el café desaparece en 5 min. Tu oro puede estar aquí en 20 años valiendo el doble."
-];
-function copyTemplate(idx) {
-    navigator.clipboard.writeText(templates[idx]).then(() => showToast('📋 Plantilla copiada'));
-}
+// === UTILS ===
+function timeAgo(d){const diff=Date.now()-new Date(d).getTime();const m=Math.floor(diff/60000);if(m<1)return'Ahora';if(m<60)return m+'min';const h=Math.floor(m/60);if(h<24)return h+'h';return Math.floor(h/24)+'d';}
+function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:20px;right:20px;background:#1a1a2e;color:white;padding:12px 20px;border-radius:8px;font-size:0.85rem;z-index:9999;';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000);}
 
-// ========== SETTINGS ==========
-function saveSettings() {
-    settings = { name: document.getElementById('setting-name').value, whatsapp: document.getElementById('setting-whatsapp').value, email: document.getElementById('setting-email').value, ig: document.getElementById('setting-ig').value, ref: document.getElementById('setting-ref').value, apikey: document.getElementById('setting-apikey').value };
-    localStorage.setItem('captaoro_settings', JSON.stringify(settings));
-    showToast('✅ Ajustes guardados');
-}
+// === EXPORT LEADS (CSV) ===
+function exportLeadsCSV(){if(!leads.length){showToast('No hay leads');return;}const h=['Nombre','Teléfono','Email','Canal','Estado','Fecha','Notas'];const rows=leads.map(l=>[l.name,l.phone,l.email,l.channel,l.status,l.created,l.notes]);const csv=[h,...rows].map(r=>r.join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='leads-captaoro-'+new Date().toISOString().split('T')[0]+'.csv';a.click();showToast('📥 CSV descargado');}
 
-// ========== UTILIDADES ==========
-function timeAgo(date) {
-    const diff = Date.now() - new Date(date).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'Ahora';
-    if (mins < 60) return mins + ' min';
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return hrs + 'h';
-    return Math.floor(hrs / 24) + 'd';
-}
-function showToast(msg) {
-    const t = document.createElement('div');
-    t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1a1a2e;color:white;padding:12px 20px;border-radius:8px;font-size:0.85rem;z-index:9999;animation:fadeIn 0.3s;';
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
-}
-
-// ========== INIT ==========
-renderLeads();
-updateDashboard();
+// === INIT ===
+renderLeads(); updateDashboard();
